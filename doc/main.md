@@ -1,0 +1,40 @@
+# The frequency with which large genera are expected to evolve
+
+- "Given enough data on sizes of genera having different geographical distributions, patterns of morphology and of cytogenetic diversity, one might be able to calculate the frequency with which large genera could be expected to evolve. I do not believe that this is possible with the information we have today." (Stebbins 1981)
+
+## Abstract
+
+Stebbins suggested that to calculate how often large genera could be expected to evolve, one would need sufficient data on the sizes of genera along with their geographical distributions, patterns of morphology, and patterns of cytogenetic diversity
+
+## Introduction
+
+Stebbins takes large genera (Senecio, Astragalus, Eucalyptus, etc.) and examines them across multiple parameters — geographic distribution, age, growth habit diversity, floral structure, chromosomal variation, and seed dispersal mechanisms — looking for which factors correlate with high species counts. He finds that no single factor explains all large genera; instead, different genera owe their richness to different "opportunistic interactions" between gene complexes and environmental conditions.
+
+So if he had comprehensive data on genus sizes paired with geographic range, morphological diversity, and cytogenetic patterns, he would most likely be looking for which combinations of traits are associated with unusually species-rich genera. Essentially, he'd be asking: given a genus with trait profile X (say, wide geographic range, high chromosomal variability, and diverse fruit morphology), what is the probability that it becomes a large genus? By examining the frequency of these trait combinations across many genera of varying sizes, he could estimate a base rate for the emergence of large genera.
+
+## Methods
+### Defining thresholds for large genera
+Genus species-richness in vascular plants is strongly right-skewed. Most genera contain few species. A small number contain hundreds or thousands. Rather than adopt an arbitrary size threshold, we sought a principled basis for distinguishing unusually large genera from the background distribution.
+
+We analyzed accepted species counts for 13,803 genera with at least one accepted species from the World Flora Online database. We fit both a power-law and a log-normal model to the data using maximum-likelihood estimation following Clauset et al. (2009). Power laws do not describe an entire distribution. They describe the upper tail. A key step in the Clauset et al. (2009) framework is therefore estimating x_min, the genus size above which the power law holds. Below x_min, the log-normal model adequately describes genus sizes. Above it, genera enter a heavy-tailed regime where scale-free dynamics operate. We estimated x_min by identifying the value that minimized the Kolmogorov-Smirnov distance between the empirical distribution and the fitted power law. This locates the point above which genus size departs from the log-normal body and enters the power-law tail. We then compared the power-law and log-normal fits above this threshold using a log-likelihood ratio test.
+
+To identify finer structure within this tail, we applied Head/Tail Breaks (Jiang & Yin 2010) to the genera above x_min. The algorithm works by recursive partitioning at the mean. At each step it retains the above-mean subset and continues only while that subset constitutes less than 40% of the current partition. This condition ensures that each successive subset remains heavy-tailed. 
+
+## Results
+### Genus size thresholds and tiers
+The estimated x_min was 168 species. This defined a tail of 402 genera, or 2.9% of all genera. Above this threshold, the power-law and log-normal models were statistically indistinguishable. This is a common result with finite empirical data (Clauset et al. 2009). We treat 168 species as the entry point to the tail. Genera above this threshold are rarer than expected under the log-normal body of the distribution.
+
+When Head/Tail Breaks (Jiang & Yin 2010) was applied to genera above x_min, the procedure yielded two thresholds: 420 species, separating the top 0.8% of all genera from the rest of the tail, and 883 species, separating the top 0.2%. A third iteration did not satisfy the heavy-tail criterion and was not carried forward.
+
+We define four tiers of genus size based on these thresholds. Minor genera have fewer than 168 species and make up the log-normal body of the distribution (n = 13,401). Moderate genera have 168–419 species (n = 292). Big genera have 420–882 species (n = 78). Megadiverse genera have 883 or more species (n = 32). The two upper thresholds align with conventional botanical definitions of big and megadiverse genera. They provide a statistical foundation for size categories that have previously been used only descriptively.
+
+![Figure 1. Genus size distribution.](../plots/fig_distribution.png)
+Figure 1. Genus size distribution for 13,803 accepted vascular plant genera. Bars are coloured by tier: minor genera (grey, <168 species) follow the log-normal body of the distribution; moderate, big, and megadiverse genera occupy the tail above x_min. Dashed vertical lines indicate the three data-derived thresholds (168, 420, 884 species). Both axes are log-scaled.
+
+## Discussion
+### Interpreting genus size thresholds
+The x_min threshold is an estimate of where a power-law tail would begin, under the assumption that one exists. The Clauset et al. (2009) framework does not test whether the log-normal model alone is inadequate. It assumes a power-law tail is present and finds the point where the fit is best. Our likelihood ratio test showed that, above this point, the power-law and log-normal models are statistically indistinguishable. The data are consistent with both models in the tail. It is possible that a single log-normal process generates the entire distribution, including the extreme values. It is also possible that a different process operates above x_min. The analysis cannot distinguish these scenarios. With that said, what the threshold does provide is a principled, reproducible reference point. Genera above 168 species are in the extreme right tail regardless of which model generated them. They are rare. They are far from the mode. Any explanation of their size — whether it invokes the same stochastic process that shapes smaller genera or a distinct mechanism — must account for why these genera reached sizes that the vast majority did not. The threshold identifies genera that demand scrutiny. It does not presuppose the answer.
+
+Furthermore, if we assume that the distribution does follow a power law (as many do [citations]), some biological interpretations follow. Below x_min, genus size is the product of many independent, multiplicative factors — speciation rate, extinction rate, clade age, geographic range, ecological opportunity. These compound randomly across genera. A genus of 20 species is not fundamentally different from a genus of 80. Both fall within the range that stochastic variation can produce. No minor genus demands special explanation. Above x_min, that interpretation no longer holds. Something about these genera — sustained high diversification, access to broad adaptive zones, repeated opportunities for geographic isolation, taxonomic oversplitting, or some combination — would have pushed them beyond what the background process predicts. Determining which mechanisms apply, and whether they vary across lineages, is a question for phylogenetic and biogeographic investigation, not distributional analysis. We stress that our data cannot resolve whether distinct processes operate above x_min. The power-law and log-normal models are indistinguishable in the tail. But the possibility provides a direction for future work on big genera.
+
+## Conclusion

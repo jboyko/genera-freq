@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Large data files
+data/
+
+# Generated outputs
+plots/
+tables/
