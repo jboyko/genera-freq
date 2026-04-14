@@ -251,38 +251,43 @@ plt.savefig(out3, dpi=180, bbox_inches="tight")
 print(f"Saved → {out3}")
 
 # ---------------------------------------------------------------------------
-# Table: power-law fit statistics per tier
-# Rows = cumulative tiers (all data, ≥xmin, ≥t_large, ≥t_mega)
+# Table: tier summary — genera, species, and median genus size
 # ---------------------------------------------------------------------------
+total_genera  = len(sizes)
+total_species = sizes.sum()
+
 tier_specs = [
-    ("All genera",   sizes),
-    (f"≥{xmin} sp. (Medium+)",      sizes[sizes >= xmin]),
-    (f"≥{t_big} sp. (Big+)",        sizes[sizes >= t_big]),
-    (f"≥{t_mega} sp. (Megadiverse+)", sizes[sizes >= t_mega]),
+    ("Small",        sizes[sizes < xmin],                          f"<{xmin}"),
+    ("Medium",       sizes[(sizes >= xmin)  & (sizes < t_big)],    f"{xmin}–{t_big-1}"),
+    ("Big",          sizes[(sizes >= t_big) & (sizes < t_mega)],   f"{t_big}–{t_mega-1}"),
+    ("Megadiverse",  sizes[sizes >= t_mega],                       f"≥{t_mega}"),
 ]
 
 rows = []
-print("\nPower-law fit statistics per tier")
-print(f"{'Tier':<50} {'n':>6}  {'xmin':>6}  {'alpha':>6}  {'sigma':>6}  {'R (LN)':>8}  {'p':>5}")
-print("-" * 75)
+print("\nTier summary")
+print(f"{'Tier':<14} {'Range':>10}  {'Genera':>7}  {'% genera':>9}  "
+      f"{'Species':>10}  {'% species':>10}  {'Median sp.':>11}")
+print("-" * 80)
 
-for label, data in tier_specs:
-    f_tier = powerlaw.Fit(data, discrete=True, verbose=False)
-    R_tier, p_tier = f_tier.distribution_compare("power_law", "lognormal")
+for label, data, rng in tier_specs:
+    n_gen   = len(data)
+    n_sp    = data.sum()
+    pct_gen = 100 * n_gen / total_genera
+    pct_sp  = 100 * n_sp  / total_species
+    med     = int(np.median(data))
     rows.append({
-        "Tier":    label,
-        "n":       len(data),
-        "xmin":    int(f_tier.xmin),
-        "alpha":   round(f_tier.power_law.alpha, 3),
-        "sigma":   round(f_tier.power_law.sigma, 3),
-        "R_LN":    round(R_tier, 3),
-        "p":       round(p_tier, 3),
+        "Tier":          label,
+        "Range (sp.)":   rng,
+        "Genera":        n_gen,
+        "% genera":      round(pct_gen, 1),
+        "Species":       int(n_sp),
+        "% species":     round(pct_sp, 1),
+        "Median sp.":    med,
     })
-    print(f"{label:<50} {len(data):>6,}  {int(f_tier.xmin):>6}  "
-          f"{f_tier.power_law.alpha:>6.3f}  {f_tier.power_law.sigma:>6.3f}  "
-          f"{R_tier:>8.3f}  {p_tier:>5.3f}")
+    print(f"{label:<14} {rng:>10}  {n_gen:>7,}  {pct_gen:>8.1f}%  "
+          f"{n_sp:>10,}  {pct_sp:>9.1f}%  {med:>11,}")
 
-table_out = Path("tables/table_powerlaw_fits.csv")
+table_out = Path("tables/table_tier_summary.csv")
 table_out.parent.mkdir(exist_ok=True)
 pd.DataFrame(rows).to_csv(table_out, index=False)
 print(f"\nSaved → {table_out}")
